@@ -44,9 +44,11 @@ public class NBodies extends JPanel
     {
         String fileInput = fileName;
         content = new ArrayList<>();
+        String [] parameters = new String[8];
+
         try(BufferedReader read = new BufferedReader(new FileReader(fileInput)))
         {
-            String line = " ";
+            String line = "";
             while((line = read.readLine())!=null){
                 content.add(line.split(","));
             }
@@ -54,7 +56,6 @@ public class NBodies extends JPanel
             System.out.println("Error no file found");
 
         }
-
         if(content.contains("ArrayList"))
         {
             List<celestialBody> arrList = new ArrayList<>();
