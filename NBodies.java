@@ -12,11 +12,23 @@ public class NBodies extends JPanel
 {
     private String name;
     private double mass;
-    private double xPosition;
-    private double yPostion;
+    private double xValue;
+    private double yValue;
+    private double xDirection;
+    private double yDirection;
     private double size;
-    private double scale;
     private List<String[]> content;
+
+    private static class Node<celestialBody>
+    {
+        celestialBody data;
+        Node<celestialBody> next;
+        Node(celestialBody data)
+        {
+            this.data = data;
+            next = null;
+        }
+    }
 
     private static class celestialBody
     {
@@ -38,13 +50,17 @@ public class NBodies extends JPanel
             this.yDirection = yDirection;
             this.size = size;
         }
+
+        public double xValue()
+        {
+            return xValue;
+        }
     }
 
     public NBodies(String fileName) throws IOException
     {
         String fileInput = fileName;
         content = new ArrayList<>();
-        String [] parameters = new String[8];
 
         try(BufferedReader read = new BufferedReader(new FileReader(fileInput)))
         {
@@ -59,9 +75,20 @@ public class NBodies extends JPanel
         if(content.contains("ArrayList"))
         {
             List<celestialBody> arrList = new ArrayList<>();
+            for(int i=2;i<content.size();i++)
+            {
+                name = content.get(i)[3];
+                mass = Double.parseDouble(content.get(i)[4]);
+                xValue = Double.parseDouble(content.get(i)[5]);
+                yValue = Double.parseDouble(content.get(i)[6]);
+                xDirection = Double.parseDouble(content.get(i)[7]);
+                yDirection =  Double.parseDouble(content.get(i)[8]);
+                size = Double.parseDouble(content.get(i)[9]);
+                celestialBody createPlanet = new celestialBody(name,mass,xValue,yValue,xDirection,yDirection,size);
+                arrList.add(createPlanet);
+            }
         }
     }
-
 
     @Override
     public void paintComponent(Graphics g)
