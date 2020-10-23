@@ -7,17 +7,20 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.io.IOException;
 import java.io.*;
+import javax.swing.Timer;
 
 public class NBodies extends JPanel
 {
     private String name;
     private double mass;
-    private double xValue;
-    private double yValue;
+    private int xValue;
+    private int yValue;
     private double xDirection;
     private double yDirection;
-    private double size;
+    private int size;
     private List<String[]> content;
+    private List<celestialBody> arrList;
+    private Random rand;
 
     private static class Node<celestialBody>
     {
@@ -34,13 +37,13 @@ public class NBodies extends JPanel
     {
         private String name;
         private double mass;
-        private double xValue;
-        private double yValue;
+        private int xValue;
+        private int yValue;
         private double xDirection;
         private double yDirection;
-        private double size;
+        private int size;
 
-        public celestialBody(String name, double mass, double xValue, double yValue, double xDirection, double yDirection, double size)
+        public celestialBody(String name, double mass, int xValue, int yValue, double xDirection, double yDirection, int size)
         {
             this.name = name;
             this.mass = mass;
@@ -51,9 +54,24 @@ public class NBodies extends JPanel
             this.size = size;
         }
 
-        public double xValue()
+        public String getName()
         {
-            return xValue;
+            return this.name;
+        }
+
+        public int xValue()
+        {
+            return this.xValue;
+        }
+
+        public int yValue()
+        {
+            return this.yValue;
+        }
+
+        public int size()
+        {
+            return this.size;
         }
     }
 
@@ -72,30 +90,33 @@ public class NBodies extends JPanel
             System.out.println("Error no file found");
 
         }
-        if(content.contains("ArrayList"))
-        {
-            List<celestialBody> arrList = new ArrayList<>();
+       
+            arrList = new ArrayList<>();
             for(int i=2;i<content.size();i++)
             {
-                name = content.get(i)[3];
-                mass = Double.parseDouble(content.get(i)[4]);
-                xValue = Double.parseDouble(content.get(i)[5]);
-                yValue = Double.parseDouble(content.get(i)[6]);
-                xDirection = Double.parseDouble(content.get(i)[7]);
-                yDirection =  Double.parseDouble(content.get(i)[8]);
-                size = Double.parseDouble(content.get(i)[9]);
+                name = content.get(i)[0];
+                mass = Double.parseDouble(content.get(i)[1]);
+                xValue = Integer.parseInt(content.get(i)[2]);
+                yValue = Integer.parseInt(content.get(i)[3]);
+                xDirection = Double.parseDouble(content.get(i)[4]);
+                yDirection =  Double.parseDouble(content.get(i)[5]);
+                size = Integer.parseInt(content.get(i)[6]);
                 celestialBody createPlanet = new celestialBody(name,mass,xValue,yValue,xDirection,yDirection,size);
+                System.out.println(createPlanet.getName());
                 arrList.add(createPlanet);
             }
-        }
     }
 
     @Override
     public void paintComponent(Graphics g)
     {
+        this.rand = new Random();
         super.paintComponent(g);
-        g.setColor(Color.RED);
-        g.fillOval(100,100,20,20);
+        for(int i =0;i<arrList.size();i++)
+        {
+            g.setColor(Color.RED);
+            g.fillOval(arrList.get(i).xValue(),arrList.get(i).yValue(),arrList.get(i).size(),arrList.get(i).size());
+        }
     }
 
     public static void main(String[] args) throws IOException
