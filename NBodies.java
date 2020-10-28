@@ -7,75 +7,28 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.io.IOException;
 import java.io.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.Timer;
 
-public class NBodies extends JPanel
+public class NBodies extends JPanel implements ActionListener
 {
     private String name;
     private double mass;
     private int xValue;
-    private int yValue;
+    private int yValue; 
     private double xDirection;
     private double yDirection;
     private int size;
     private List<String[]> content;
     private List<celestialBody> arrList;
+    private double scale;
     private Random rand;
+    Timer time = new Timer(5,this);
+    double value=0;
+    int velocity = 2;
 
-    private static class Node<celestialBody>
-    {
-        celestialBody data;
-        Node<celestialBody> next;
-        Node(celestialBody data)
-        {
-            this.data = data;
-            next = null;
-        }
-    }
-
-    private static class celestialBody
-    {
-        private String name;
-        private double mass;
-        private int xValue;
-        private int yValue;
-        private double xDirection;
-        private double yDirection;
-        private int size;
-
-        public celestialBody(String name, double mass, int xValue, int yValue, double xDirection, double yDirection, int size)
-        {
-            this.name = name;
-            this.mass = mass;
-            this.xValue = xValue;
-            this.yValue = yValue;
-            this.xDirection = xDirection;
-            this.yDirection = yDirection;
-            this.size = size;
-        }
-
-        public String getName()
-        {
-            return this.name;
-        }
-
-        public int xValue()
-        {
-            return this.xValue;
-        }
-
-        public int yValue()
-        {
-            return this.yValue;
-        }
-
-        public int size()
-        {
-            return this.size;
-        }
-    }
-
-    public NBodies(String fileName) throws IOException
+    public NBodies(String fileName) throws IOException, Exception
     {
         String fileInput = fileName;
         content = new ArrayList<>();
@@ -83,15 +36,24 @@ public class NBodies extends JPanel
         try(BufferedReader read = new BufferedReader(new FileReader(fileInput)))
         {
             String line = "";
-            while((line = read.readLine())!=null){
+            while((line = read.readLine())!=null)
+            {
                 content.add(line.split(","));
             }
         }catch (Exception e){
             System.out.println("Error no file found");
-
+            System.exit(0);
         }
+        scale = Double.parseDouble(content.get(1)[0]);
        
-            arrList = new ArrayList<>();
+            if(content.get(0)[0].equals("ArrayList"))
+            {
+                arrList = new ArrayList<celestialBody>();
+            }
+            else{
+                arrList = new LinkedList<celestialBody>();
+            }
+
             for(int i=2;i<content.size();i++)
             {
                 name = content.get(i)[0];
@@ -112,14 +74,38 @@ public class NBodies extends JPanel
     {
         this.rand = new Random();
         super.paintComponent(g);
-        for(int i =0;i<arrList.size();i++)
-        {
-            g.setColor(Color.RED);
-            g.fillOval(arrList.get(i).xValue(),arrList.get(i).yValue(),arrList.get(i).size(),arrList.get(i).size());
-        }
+        
+            for(int i =0;i<arrList.size();i++)
+            {
+                g.setColor(Color.RED);
+                g.fillOval(arrList.get(i).xValue(),arrList.get(i).yValue(),arrList.get(i).size(),arrList.get(i).size());
+            }
+        time.start();
     }
 
-    public static void main(String[] args) throws IOException
+    public Double gravityFormula(celestialBody p1, celestialBody p2)
+    {
+        final double gravConstant = 9.8;
+        double xDistance = (p1.xValue()-p2.xValue())*scale;
+        double yDistance = (p1.yValue()-p2.yValue())*scale;
+        double trueDistance = Math.sqrt((xDistance*xDistance)+(yDistance*yDistance));
+        double acceleration = (gravConstant*((p1.size()*p2.size()))/trueDistance);
+        return acceleration;
+    }
+
+    public void actionPerformed(ActionEvent e)
+    {
+        if(value<0||value>768){
+			velocity= -velocity;
+        }
+        for(int i = 0;i<arrList.size()-1;i++)
+        {
+            value = gravityFormula(arrList.get(i),arrList.get(i+1));
+        }
+		repaint();
+    }
+
+    public static void main(String[] args) throws IOException, Exception
     {
         String fileName = "nbody_input.txt";
         NBodies t = new NBodies(fileName);
@@ -129,6 +115,5 @@ public class NBodies extends JPanel
         jf.add(t); // This appears below "setVisible" in the video 
         jf.setVisible(true); 
         jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
     }
 }
