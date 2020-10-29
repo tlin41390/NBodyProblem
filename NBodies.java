@@ -1,4 +1,5 @@
 import java.util.*;
+import java.lang.*;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
 import java.io.BufferedReader;
@@ -26,7 +27,9 @@ public class NBodies extends JPanel implements ActionListener
     private Random rand;
     Timer time = new Timer(5,this);
     double value=0;
-    int velocity = 2;
+    int velocity=2;
+    int rotationX;
+    int rotationY;
 
     public NBodies(String fileName) throws IOException, Exception
     {
@@ -48,10 +51,10 @@ public class NBodies extends JPanel implements ActionListener
        
             if(content.get(0)[0].equals("ArrayList"))
             {
-                arrList = new ArrayList<celestialBody>();
+                arrList = new ArrayList<>();
             }
             else{
-                arrList = new LinkedList<celestialBody>();
+                arrList = new LinkedList<>();
             }
 
             for(int i=2;i<content.size();i++)
@@ -72,7 +75,6 @@ public class NBodies extends JPanel implements ActionListener
     @Override
     public void paintComponent(Graphics g)
     {
-        this.rand = new Random();
         super.paintComponent(g);
         
             for(int i =0;i<arrList.size();i++)
@@ -95,14 +97,15 @@ public class NBodies extends JPanel implements ActionListener
 
     public void actionPerformed(ActionEvent e)
     {
-        if(value<0||value>768){
-			velocity= -velocity;
-        }
         for(int i = 0;i<arrList.size()-1;i++)
         {
             value = gravityFormula(arrList.get(i),arrList.get(i+1));
+            arrList.get(i).setVelx(((arrList.get(i).xVelocity()+value)/scale/arrList.get(i).getMass()));
+            arrList.get(i).setX((int) (arrList.get(i).xValue()+arrList.get(i).xVelocity()));
+            arrList.get(i).setVely(((arrList.get(i).yVelocity()+value)/scale/arrList.get(i).getMass()));
+            arrList.get(i).setY((int) (arrList.get(i).yValue()+arrList.get(i).yVelocity()));
         }
-		repaint();
+        repaint(); 
     }
 
     public static void main(String[] args) throws IOException, Exception
