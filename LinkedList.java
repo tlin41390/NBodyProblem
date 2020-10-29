@@ -1,3 +1,4 @@
+import java.util.*;
 public class LinkedList<T> implements List<T> 
 {
     Node<T> head;
@@ -5,7 +6,7 @@ public class LinkedList<T> implements List<T>
     private static class Node<T>
     {
         Node<T> next;
-        int data;
+        T data;
 
         public Node(T data)
         {
@@ -27,6 +28,7 @@ public class LinkedList<T> implements List<T>
         {
             head = node;
             ++size;
+            return false;
         }else{
             Node<T> curr = head;
             while(curr.next!=null)
@@ -64,14 +66,13 @@ public class LinkedList<T> implements List<T>
             return null;
         }
         Node<T> curr = head;
-        for(int i =0;i<index-1;i++)
+        for(int i =0;i<index;i++)
         {
             curr = curr.next;
         }
-        curr = curr.next;
         return curr.data;
     }
-    public int getSize()
+    public int size()
     {
         return size;
     }
