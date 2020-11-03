@@ -1,4 +1,3 @@
-import java.util.*;
 public class LinkedList<T> implements List<T> 
 {
     Node<T> head;
@@ -20,7 +19,7 @@ public class LinkedList<T> implements List<T>
         head = null;
         size =0;
     }
-
+    @Override
     public boolean add(T data)
     {
         Node<T> node = new Node(data);
@@ -40,7 +39,7 @@ public class LinkedList<T> implements List<T>
             return true;
         }
     }
-
+    @Override
     public void add(T data, int index)
     {
         Node<T> node = new Node(data);
@@ -58,7 +57,7 @@ public class LinkedList<T> implements List<T>
         }
         curr = node;
     }
-
+    @Override
     public T get(int index)
     {
         if(index<0||index>=size)
@@ -72,6 +71,7 @@ public class LinkedList<T> implements List<T>
         }
         return curr.data;
     }
+    @Override
     public int size()
     {
         return size;

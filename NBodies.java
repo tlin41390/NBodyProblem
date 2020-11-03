@@ -24,16 +24,17 @@ public class NBodies extends JPanel implements ActionListener
     private List<String[]> content;
     private List<celestialBody> arrList;
     private double scale;
-    Timer time = new Timer(50,this);
-    int velocity=2;
+    Timer time = new Timer(1,this);
     int rotationX;
     int rotationY;
-    final double gravity = 9.8;
+    int maxX = 768;
+    int maxY = 768;
+    double gravity = 6.67408e-11;
 
     public NBodies(String fileName) throws IOException, Exception
     {
         String fileInput = fileName;
-        content = new ArrayList<>();
+        content = new ArrayList <>();
 
         try(BufferedReader read = new BufferedReader(new FileReader(fileInput)))
         {
@@ -78,20 +79,21 @@ public class NBodies extends JPanel implements ActionListener
         
             for(int i =0;i<arrList.size();i++)
             {
+                celestialBody body = arrList.get(i);
                 g.setColor(Color.RED);
-                g.fillOval((int) arrList.get(i).xValue(),(int) arrList.get(i).yValue(),arrList.get(i).size()*2,arrList.get(i).size()*2);
+                g.fillOval((int) body.xValue(),(int) body.yValue(),body.size()*2,body.size()*2);
             }
         time.start();
     }
 
-    public double getXdistance(celestialBody p1, celestialBody p2)
+    public double distance(double distx, double disty)
     {
-        return(p1.xValue()-p2.xValue())*scale;
+        return (distx-disty)*scale;
     }
 
-    public double getYdistance(celestialBody p1, celestialBody p2)
+    public double gravitation(double mass, double mass2, double distance)
     {
-        return (p1.yValue()-p2.yValue())*scale;
+        return(gravity* mass*mass2)/(Math.pow(distance,2));
     }
 
     @Override
@@ -107,8 +109,8 @@ public class NBodies extends JPanel implements ActionListener
                 if(i!=j)
                 {
                     celestialBody body2 = arrList.get(j);
-                    double xDistance = getXdistance(body1,body2);
-                    double yDistance = getYdistance(body1,body2);
+                    double xDistance = distance(body1.xValue(),body2.xValue());
+                    double yDistance = distance(body1.yValue(),body2.yValue());
                     double gravityX = gravity * (body1.getMass()*body2.getMass())/Math.pow(xDistance,2);
                     double gravityY = gravity * (body1.getMass()*body2.getMass())/Math.pow(yDistance,2);
 
@@ -153,7 +155,7 @@ public class NBodies extends JPanel implements ActionListener
         NBodies t = new NBodies(fileName);
         JFrame jf = new JFrame(); 
         jf.setTitle("Celestial Bodies"); 
-        jf.setSize(768, 768); // Window size defined in the class 
+        jf.setSize(t.maxX, t.maxY); // Window size defined in the class 
         jf.add(t); // This appears below "setVisible" in the video 
         jf.setVisible(true); 
         jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

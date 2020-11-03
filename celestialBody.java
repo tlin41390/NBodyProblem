@@ -1,4 +1,3 @@
-import java.util.*;
 public class celestialBody {
 
         private String name;
@@ -25,14 +24,14 @@ public class celestialBody {
             return this.name;
         }
 
-        public void setX(double xValue)
+        public void setX(double updateX)
         {
-            this.xValue += xDirection;
+            this.xValue =updateX;
         }
 
-        public void setY(double yValue)
+        public void setY(double updateY)
         {
-            this.yValue += yDirection;
+            this.yValue = updateY;
         }
 
         public double xValue()
@@ -57,12 +56,12 @@ public class celestialBody {
 
         public void setVelx(double velX)
         {
-            xDirection +=velX;
+            xDirection =velX;
         }
 
         public void setVely(double velY)
         {
-            yDirection +=velY;
+            yDirection =velY;
         }
 
 

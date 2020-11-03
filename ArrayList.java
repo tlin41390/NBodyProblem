@@ -1,4 +1,3 @@
-import java.util.*;
 public class ArrayList<T> implements List<T> {
     T [] arr;
     int size;
@@ -7,7 +6,7 @@ public class ArrayList<T> implements List<T> {
     {
         arr =  (T[]) new Object[10];
     }
-
+    @Override
     public int size()
     {
         return size;
@@ -22,7 +21,7 @@ public class ArrayList<T> implements List<T> {
         }
         arr = newArr;
     }
-
+    @Override
     public T get(int index)
     {
         if( index<0||index>=arr.length)
@@ -31,7 +30,7 @@ public class ArrayList<T> implements List<T> {
         }
         return arr[index];
     }
-
+    @Override
     public boolean add(T data)
     {
         if(size==arr.length)
@@ -41,7 +40,7 @@ public class ArrayList<T> implements List<T> {
         arr[size++]= data;
         return true;
     }
-
+    @Override
     public void add(T data, int index)
     {
         if(size == arr.length)
