@@ -3,11 +3,10 @@ public class celestialBody {
 
         private String name;
         private double mass;
-        private int xValue;
-        private int yValue;
+        private double xValue;
+        private double yValue;
         private double xDirection;
         private double yDirection;
-        private double updateX;
         private int size;
 
         public celestialBody(String name, double mass, int xValue, int yValue, double xDirection, double yDirection, int size)
@@ -26,17 +25,17 @@ public class celestialBody {
             return this.name;
         }
 
-        public void setX(int xValue)
+        public void setX(double xValue)
         {
             this.xValue += xDirection;
         }
 
-        public void setY(int yValue)
+        public void setY(double yValue)
         {
             this.yValue += yDirection;
         }
 
-        public int xValue()
+        public double xValue()
         {
             return this.xValue;
         }
@@ -46,7 +45,7 @@ public class celestialBody {
             return this.mass;
         }
 
-        public int yValue()
+        public double yValue()
         {
             return this.yValue;
         }

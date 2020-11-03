@@ -24,12 +24,11 @@ public class NBodies extends JPanel implements ActionListener
     private List<String[]> content;
     private List<celestialBody> arrList;
     private double scale;
-    private Random rand;
-    Timer time = new Timer(5,this);
-    double value=0;
+    Timer time = new Timer(50,this);
     int velocity=2;
     int rotationX;
     int rotationY;
+    final double gravity = 9.8;
 
     public NBodies(String fileName) throws IOException, Exception
     {
@@ -80,32 +79,72 @@ public class NBodies extends JPanel implements ActionListener
             for(int i =0;i<arrList.size();i++)
             {
                 g.setColor(Color.RED);
-                g.fillOval(arrList.get(i).xValue(),arrList.get(i).yValue(),arrList.get(i).size(),arrList.get(i).size());
+                g.fillOval((int) arrList.get(i).xValue(),(int) arrList.get(i).yValue(),arrList.get(i).size()*2,arrList.get(i).size()*2);
             }
         time.start();
     }
 
-    public Double gravityFormula(celestialBody p1, celestialBody p2)
+    public double getXdistance(celestialBody p1, celestialBody p2)
     {
-        final double gravConstant = 9.8;
-        double xDistance = (p1.xValue()-p2.xValue())*scale;
-        double yDistance = (p1.yValue()-p2.yValue())*scale;
-        double trueDistance = Math.sqrt((xDistance*xDistance)+(yDistance*yDistance));
-        double acceleration = (gravConstant*((p1.size()*p2.size()))/trueDistance);
-        return acceleration;
+        return(p1.xValue()-p2.xValue())*scale;
     }
 
+    public double getYdistance(celestialBody p1, celestialBody p2)
+    {
+        return (p1.yValue()-p2.yValue())*scale;
+    }
+
+    @Override
     public void actionPerformed(ActionEvent e)
     {
-        for(int i = 0;i<arrList.size()-1;i++)
+        for(int i = 0;i<arrList.size();i++)
         {
-            value = gravityFormula(arrList.get(i),arrList.get(i+1));
-            arrList.get(i).setVelx(((arrList.get(i).xVelocity()+value)/scale/arrList.get(i).getMass()));
-            arrList.get(i).setX((int) (arrList.get(i).xValue()+arrList.get(i).xVelocity()));
-            arrList.get(i).setVely(((arrList.get(i).yVelocity()+value)/scale/arrList.get(i).getMass()));
-            arrList.get(i).setY((int) (arrList.get(i).yValue()+arrList.get(i).yVelocity()));
+            double velocityChangeX = 0.0;
+            double velocityChangeY = 0.0;
+            celestialBody body1 = arrList.get(i);
+            for(int j = 0;j<arrList.size();j++)
+            {
+                if(i!=j)
+                {
+                    celestialBody body2 = arrList.get(j);
+                    double xDistance = getXdistance(body1,body2);
+                    double yDistance = getYdistance(body1,body2);
+                    double gravityX = gravity * (body1.getMass()*body2.getMass())/Math.pow(xDistance,2);
+                    double gravityY = gravity * (body1.getMass()*body2.getMass())/Math.pow(yDistance,2);
+
+                    if(body1.xValue()-body2.xValue()==0)
+                    {
+                        gravityX = 0.0;
+                    }
+                    
+                    if(body1.xValue()<body2.xValue())
+                    {
+                        velocityChangeX-=gravityX;
+                    }else{
+                        velocityChangeX+=gravityX;
+                    }
+
+                    if(body1.yValue()-body2.yValue()==0)
+                    {
+                        gravityY = 0.0;
+                    }
+
+                    if(body1.yValue()<body2.yValue())
+                    {
+                        velocityChangeY-=gravityY;
+                    }else{
+                        velocityChangeY+=gravityY;
+                    }
+
+                }
+            }
+            body1.setVelx(body1.xVelocity()+velocityChangeX/scale/body1.getMass());
+            body1.setVely(body1.yVelocity()+velocityChangeY/scale/body1.getMass());
+
+            body1.setX(body1.xValue()+body1.xVelocity());
+            body1.setY(body1.yValue()+body1.yVelocity());
         }
-        repaint(); 
+        repaint();
     }
 
     public static void main(String[] args) throws IOException, Exception
