@@ -1,5 +1,4 @@
 import java.util.*;
-import java.lang.*;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
 import java.io.BufferedReader;
@@ -23,7 +22,7 @@ public class NBodies extends JPanel implements ActionListener
     private double yDirection;
     private int size;
     private List<String[]> content;
-    private List<celestialBody> arrList;
+    private List<celestialBody> bodyList;
     private double scale;
     Timer time = new Timer(0,this);
     int rotationX;
@@ -42,24 +41,29 @@ public class NBodies extends JPanel implements ActionListener
             String line = "";
             while((line = read.readLine())!=null)
             {
+                //adds the lines of the file to the container.
                 content.add(line.split(","));
             }
         }catch (Exception e){
+            //if file is not found.
             System.out.println("Error no file found");
             System.exit(0);
         }
         scale = Double.parseDouble(content.get(1)[0]);
-       
+            //checks to see if the file specifies for arraylist or not.
             if(content.get(0)[0].equals("ArrayList"))
             {
-                arrList = new ArrayList<>();
+                bodyList = new ArrayList<>();
             }
             else{
-                arrList = new LinkedList<>();
+                bodyList = new LinkedList<>();
             }
 
             for(int i=2;i<content.size();i++)
             {
+                //this will loop through the content of the container, and then get the specific details of the 
+                //file, and if the data is a string, then it will parse into either an int or a double. Finally it will
+                //print out the planets and their data.
                 name = content.get(i)[0];
                 mass = Double.parseDouble(content.get(i)[1]);
                 xValue = Integer.parseInt(content.get(i)[2]);
@@ -69,7 +73,7 @@ public class NBodies extends JPanel implements ActionListener
                 size = Integer.parseInt(content.get(i)[6]);
                 celestialBody createPlanet = new celestialBody(name,mass,xValue,yValue,xDirection,yDirection,size);
                 System.out.println(createPlanet.toString());
-                arrList.add(createPlanet);
+                bodyList.add(createPlanet);
             }
     }
 
@@ -77,14 +81,23 @@ public class NBodies extends JPanel implements ActionListener
     public void paintComponent(Graphics g)
     {
         super.paintComponent(g);
-        for(int i =0;i<arrList.size();i++)
+        for(int i =0;i<bodyList.size();i++)
         {
-            celestialBody body = arrList.get(i);
+            //this block will create a celestialbody based off of the list of planets, and then
+            //create that planet with its x and y value and its size. Three are also drawstring
+            //methods to keep track of the coordinates.
+            celestialBody body = bodyList.get(i);
             g.setColor(Color.BLUE);
             g.fillOval((int) body.xValue(),(int) body.yValue(),body.size(),body.size());
-            g.drawString(Integer.toString(i), (int) body.xValue() + body.size()*2, (int)body.yValue() + body.size()*2);
-            g.drawString(String.format("%.3f",body.xVelocity()) + "" + String.format("%.3f",body.yVelocity()), (int) body.xValue() + body.size(), (int) body.yValue() + body.size() + 10);
-            g.drawString(String.format("%.3f",body.xValue()) + "" + String.format("%.3f",body.yValue()), (int) body.xValue() + body.size(),(int) body.yValue() + body.size()+ 20);
+            
+            g.drawString(Integer.toString(i), (int) body.xValue() + body.size(), 
+            (int)body.yValue() + body.size());
+
+            g.drawString(String.format("%.3f",body.xVelocity()) + "" + String.format("%.3f",body.yVelocity()), 
+            (int) body.xValue() + body.size(), (int) body.yValue() + body.size());
+
+            g.drawString(String.format("%.3f",body.xValue()) + "" + String.format("%.3f",body.yValue()), 
+            (int) body.xValue() + body.size(),(int) body.yValue() + body.size());
         }
         time.start();
     }
@@ -102,23 +115,28 @@ public class NBodies extends JPanel implements ActionListener
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        for(int i = 0;i<arrList.size();i++)
+        for(int i = 0;i<bodyList.size();i++)
         {
-            celestialBody body1 = arrList.get(i);
+            //create a planet and initialize delta x and y.
+            celestialBody body1 = bodyList.get(i);
             double velocityChangeX = 0.0;
             double velocityChangeY = 0.0;
-            for(int j = 0;j<arrList.size();j++)
+            for(int j = 0;j<bodyList.size();j++)
             {
                 if(i!=j)
                 {
-                    celestialBody body2 = arrList.get(j);
+                    //creates a second body based off of j, and then calculates the xdistance, the ydistance
+                    //as well as the diagnal of both x and y distance to plug into the gravity formula. Later 
+                    //create a gravity variable for both x and y.
+                    celestialBody body2 = bodyList.get(j);
                     double xDistance = distance(body1.xValue(),body2.xValue());
                     double yDistance = distance(body1.yValue(),body2.yValue());
                     double distance = Math.sqrt(xDistance*xDistance+yDistance*yDistance);
                     double gravPull = gravitation(body1.getMass(),body2.getMass(),distance);
                     double gravityX = gravPull* xDistance/distance;
                     double gravityY = gravPull * yDistance/distance;
-
+                    
+                    //resolve collisions as well as checks for planets flying off the jframe.
                     if(body1.xValue()-body2.xValue()==0)
                     {
                         gravityX = 0.0;
@@ -134,7 +152,7 @@ public class NBodies extends JPanel implements ActionListener
                         gravityY = 0.0;
                     }
 
-                    if(body1.yValue()>maxY||body2.yValue()>maxY)
+                    if(body1.yValue()>=maxY||body2.yValue()>=maxY)
                     {
                         gravityY= 0.0;
                     }
@@ -147,6 +165,7 @@ public class NBodies extends JPanel implements ActionListener
                     }
                 }
             }
+            //constant update for the the velocity as well as the position for the x and y.
             body1.setVelx(body1.xVelocity() + velocityChangeX / scale / body1.getMass());
             body1.setVely(body1.yVelocity() + velocityChangeY / scale / body1.getMass());
 
@@ -155,10 +174,14 @@ public class NBodies extends JPanel implements ActionListener
         }
         repaint();
     }
-
     public static void main(String[] args) throws IOException, Exception
     {
-        String fileName = "nbody_input.txt";
+        String fileName = "";
+        fileName = args[0];
+        if(args.length == 0)
+        {
+            throw new Exception("Error no file found");
+        }
         NBodies t = new NBodies(fileName);
         JFrame jf = new JFrame(); 
         jf.setTitle("Celestial Bodies"); 
