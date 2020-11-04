@@ -119,11 +119,24 @@ public class NBodies extends JPanel implements ActionListener
                     double gravityX = gravPull* xDistance/distance;
                     double gravityY = gravPull * yDistance/distance;
 
+                    if(body1.xValue()-body2.xValue()==0)
+                    {
+                        gravityX = 0.0;
+                    }
                     if(body1.xValue()<body2.xValue())
                     {
                         velocityChangeX-=gravityX;
                     }else{
                         velocityChangeX+=gravityX;
+                    }
+                    if(body1.yValue()-body2.yValue()==0)
+                    {
+                        gravityY = 0.0;
+                    }
+
+                    if(body1.yValue()>maxY||body2.yValue()>maxY)
+                    {
+                        gravityY= 0.0;
                     }
 
                     if(body1.yValue()<body2.yValue())
