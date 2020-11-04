@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.awt.Color;
+import java.awt.*;
 import java.awt.Graphics;
 import java.io.IOException;
 import java.io.*;
@@ -24,7 +25,7 @@ public class NBodies extends JPanel implements ActionListener
     private List<String[]> content;
     private List<celestialBody> arrList;
     private double scale;
-    Timer time = new Timer(1,this);
+    Timer time = new Timer(0,this);
     int rotationX;
     int rotationY;
     int maxX = 768;
@@ -67,7 +68,7 @@ public class NBodies extends JPanel implements ActionListener
                 yDirection =  Double.parseDouble(content.get(i)[5]);
                 size = Integer.parseInt(content.get(i)[6]);
                 celestialBody createPlanet = new celestialBody(name,mass,xValue,yValue,xDirection,yDirection,size);
-                System.out.println(createPlanet.getName());
+                System.out.println(createPlanet.toString());
                 arrList.add(createPlanet);
             }
     }
@@ -76,13 +77,15 @@ public class NBodies extends JPanel implements ActionListener
     public void paintComponent(Graphics g)
     {
         super.paintComponent(g);
-        
-            for(int i =0;i<arrList.size();i++)
-            {
-                celestialBody body = arrList.get(i);
-                g.setColor(Color.RED);
-                g.fillOval((int) body.xValue(),(int) body.yValue(),body.size()*2,body.size()*2);
-            }
+        for(int i =0;i<arrList.size();i++)
+        {
+            celestialBody body = arrList.get(i);
+            g.setColor(Color.BLUE);
+            g.fillOval((int) body.xValue(),(int) body.yValue(),body.size(),body.size());
+            g.drawString(Integer.toString(i), (int) body.xValue() + body.size()*2, (int)body.yValue() + body.size()*2);
+            g.drawString(Double.toString(body.xVelocity()) + " " + Double.toString(body.yVelocity()), (int) body.xValue() + body.size(), (int) body.yValue() + body.size() + 10);
+            g.drawString(Double.toString(body.xValue()) + " " + Double.toString(body.yValue()), (int) body.xValue() + body.size(),(int) body.yValue() + body.size()+ 20);
+        }
         time.start();
     }
 
@@ -93,7 +96,7 @@ public class NBodies extends JPanel implements ActionListener
 
     public double gravitation(double mass, double mass2, double distance)
     {
-        return(gravity* mass*mass2)/(Math.pow(distance,2));
+        return gravity*(mass*mass2)/(Math.pow(distance,2));
     }
 
     @Override
@@ -101,9 +104,9 @@ public class NBodies extends JPanel implements ActionListener
     {
         for(int i = 0;i<arrList.size();i++)
         {
+            celestialBody body1 = arrList.get(i);
             double velocityChangeX = 0.0;
             double velocityChangeY = 0.0;
-            celestialBody body1 = arrList.get(i);
             for(int j = 0;j<arrList.size();j++)
             {
                 if(i!=j)
@@ -111,14 +114,13 @@ public class NBodies extends JPanel implements ActionListener
                     celestialBody body2 = arrList.get(j);
                     double xDistance = distance(body1.xValue(),body2.xValue());
                     double yDistance = distance(body1.yValue(),body2.yValue());
-                    double gravityX = gravity * (body1.getMass()*body2.getMass())/Math.pow(xDistance,2);
-                    double gravityY = gravity * (body1.getMass()*body2.getMass())/Math.pow(yDistance,2);
+                    double gravityX = gravitation(body1.getMass(),body2.getMass(),xDistance);
+                    double gravityY = gravitation(body1.getMass(), body2.getMass(), yDistance);
 
                     if(body1.xValue()-body2.xValue()==0)
                     {
                         gravityX = 0.0;
                     }
-                    
                     if(body1.xValue()<body2.xValue())
                     {
                         velocityChangeX-=gravityX;
@@ -130,21 +132,19 @@ public class NBodies extends JPanel implements ActionListener
                     {
                         gravityY = 0.0;
                     }
-
                     if(body1.yValue()<body2.yValue())
                     {
                         velocityChangeY-=gravityY;
                     }else{
                         velocityChangeY+=gravityY;
                     }
-
                 }
             }
-            body1.setVelx(body1.xVelocity()+velocityChangeX/scale/body1.getMass());
-            body1.setVely(body1.yVelocity()+velocityChangeY/scale/body1.getMass());
+            body1.setVelx(body1.xVelocity() + velocityChangeX / scale / body1.getMass());
+            body1.setVely(body1.yVelocity() + velocityChangeY / scale / body1.getMass());
 
-            body1.setX(body1.xValue()+body1.xVelocity());
-            body1.setY(body1.yValue()+body1.yVelocity());
+            body1.setX(body1.xValue()+ body1.xVelocity());
+            body1.setY(body1.yValue()+ body1.yVelocity());
         }
         repaint();
     }
@@ -155,8 +155,8 @@ public class NBodies extends JPanel implements ActionListener
         NBodies t = new NBodies(fileName);
         JFrame jf = new JFrame(); 
         jf.setTitle("Celestial Bodies"); 
-        jf.setSize(t.maxX, t.maxY); // Window size defined in the class 
-        jf.add(t); // This appears below "setVisible" in the video 
+        jf.setSize(t.maxX, t.maxY); 
+        jf.add(t);
         jf.setVisible(true); 
         jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }

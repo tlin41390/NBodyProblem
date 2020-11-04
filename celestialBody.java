@@ -26,7 +26,7 @@ public class celestialBody {
 
         public void setX(double updateX)
         {
-            this.xValue =updateX;
+            this.xValue = updateX;
         }
 
         public void setY(double updateY)
@@ -56,7 +56,7 @@ public class celestialBody {
 
         public void setVelx(double velX)
         {
-            xDirection =velX;
+            xDirection = velX;
         }
 
         public void setVely(double velY)
@@ -73,5 +73,12 @@ public class celestialBody {
         public int size()
         {
             return this.size;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "Planet " + this.name +", mass = " + this.mass+ ", x= " +this.xValue()+  ", y = " + this.yValue +
+            ", xVelocity = "+this.xDirection+", yVelocity =  "+this.yDirection+ ", radius = "+ this.size(); 
         }
     }
