@@ -83,8 +83,8 @@ public class NBodies extends JPanel implements ActionListener
             g.setColor(Color.BLUE);
             g.fillOval((int) body.xValue(),(int) body.yValue(),body.size(),body.size());
             g.drawString(Integer.toString(i), (int) body.xValue() + body.size()*2, (int)body.yValue() + body.size()*2);
-            g.drawString(Double.toString(body.xVelocity()) + " " + Double.toString(body.yVelocity()), (int) body.xValue() + body.size(), (int) body.yValue() + body.size() + 10);
-            g.drawString(Double.toString(body.xValue()) + " " + Double.toString(body.yValue()), (int) body.xValue() + body.size(),(int) body.yValue() + body.size()+ 20);
+            g.drawString(String.format("%.3f",body.xVelocity()) + "" + String.format("%.3f",body.yVelocity()), (int) body.xValue() + body.size(), (int) body.yValue() + body.size() + 10);
+            g.drawString(String.format("%.3f",body.xValue()) + "" + String.format("%.3f",body.yValue()), (int) body.xValue() + body.size(),(int) body.yValue() + body.size()+ 20);
         }
         time.start();
     }
@@ -114,13 +114,11 @@ public class NBodies extends JPanel implements ActionListener
                     celestialBody body2 = arrList.get(j);
                     double xDistance = distance(body1.xValue(),body2.xValue());
                     double yDistance = distance(body1.yValue(),body2.yValue());
-                    double gravityX = gravitation(body1.getMass(),body2.getMass(),xDistance);
-                    double gravityY = gravitation(body1.getMass(), body2.getMass(), yDistance);
+                    double distance = Math.sqrt(xDistance*xDistance+yDistance*yDistance);
+                    double gravPull = gravitation(body1.getMass(),body2.getMass(),distance);
+                    double gravityX = gravPull* xDistance/distance;
+                    double gravityY = gravPull * yDistance/distance;
 
-                    if(body1.xValue()-body2.xValue()==0)
-                    {
-                        gravityX = 0.0;
-                    }
                     if(body1.xValue()<body2.xValue())
                     {
                         velocityChangeX-=gravityX;
@@ -128,10 +126,6 @@ public class NBodies extends JPanel implements ActionListener
                         velocityChangeX+=gravityX;
                     }
 
-                    if(body1.yValue()-body2.yValue()==0)
-                    {
-                        gravityY = 0.0;
-                    }
                     if(body1.yValue()<body2.yValue())
                     {
                         velocityChangeY-=gravityY;
