@@ -1,8 +1,10 @@
-
+import java.util.*;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
 import java.io.BufferedReader;
 import java.awt.Color;
+import java.awt.*;
+import java.io.FileNotFoundException;
 import java.awt.Graphics;
 import java.io.IOException;
 import java.io.*;
@@ -144,7 +146,6 @@ public class NBodies extends JPanel implements ActionListener
                     {
                         gravityY = 0.0;
                     }
-
 
                     if(body1.yValue()<body2.yValue())
                     {
