@@ -1,10 +1,8 @@
-import java.util.*;
+
 import javax.swing.JPanel;
 import javax.swing.JFrame;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.awt.Color;
-import java.awt.*;
 import java.awt.Graphics;
 import java.io.IOException;
 import java.io.*;
@@ -24,7 +22,7 @@ public class NBodies extends JPanel implements ActionListener
     private List<String[]> content;
     private List<celestialBody> bodyList;
     private double scale;
-    Timer time = new Timer(0,this);
+    Timer time = new Timer(1,this);
     int rotationX;
     int rotationY;
     int maxX = 768;
@@ -35,10 +33,9 @@ public class NBodies extends JPanel implements ActionListener
     {
         String fileInput = fileName;
         content = new ArrayList <>();
-
+        String line = "";
         try(BufferedReader read = new BufferedReader(new FileReader(fileInput)))
         {
-            String line = "";
             while((line = read.readLine())!=null)
             {
                 //adds the lines of the file to the container.
@@ -115,12 +112,12 @@ public class NBodies extends JPanel implements ActionListener
     @Override
     public void actionPerformed(ActionEvent e)
     {
+        double velocityChangeX = 0.0;
+        double velocityChangeY = 0.0;
         for(int i = 0;i<bodyList.size();i++)
         {
             //create a planet and initialize delta x and y.
             celestialBody body1 = bodyList.get(i);
-            double velocityChangeX = 0.0;
-            double velocityChangeY = 0.0;
             for(int j = 0;j<bodyList.size();j++)
             {
                 if(i!=j)
@@ -137,10 +134,6 @@ public class NBodies extends JPanel implements ActionListener
                     double gravityY = gravPull * yDistance/distance;
                     
                     //resolve collisions as well as checks for planets flying off the jframe.
-                    if(body1.xValue()-body2.xValue()==0)
-                    {
-                        gravityX = 0.0;
-                    }
                     if(body1.xValue()<body2.xValue())
                     {
                         velocityChangeX-=gravityX;
@@ -152,10 +145,6 @@ public class NBodies extends JPanel implements ActionListener
                         gravityY = 0.0;
                     }
 
-                    if(body1.yValue()>=maxY||body2.yValue()>=maxY)
-                    {
-                        gravityY= 0.0;
-                    }
 
                     if(body1.yValue()<body2.yValue())
                     {
@@ -168,9 +157,9 @@ public class NBodies extends JPanel implements ActionListener
             //constant update for the the velocity as well as the position for the x and y.
             body1.setVelx(body1.xVelocity() + velocityChangeX / scale / body1.getMass());
             body1.setVely(body1.yVelocity() + velocityChangeY / scale / body1.getMass());
-
-            body1.setX(body1.xValue()+ body1.xVelocity());
             body1.setY(body1.yValue()+ body1.yVelocity());
+            body1.setX(body1.xValue()+ body1.xVelocity());
+
         }
         repaint();
     }
